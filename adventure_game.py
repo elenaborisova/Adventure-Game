@@ -49,11 +49,6 @@ def enter_room6():
 
 def is_direction_possible(direction, possible_directions):
     if direction not in possible_directions:
-        print('It is not possible to go ' + direction + '!')
-        print('Possible directions:')
-        for possible_dir in possible_directions:
-            print('>>', possible_dir)
-        print()
         return False
     return True
 
@@ -67,33 +62,35 @@ def is_command_valid(command):
         return True
 
 
-# --------------------------------------------------Commands-----------------------------------------------------------
-
-def get(item, inventory, objects):
-    if item in objects:
-        inventory.append(item)
-    else:
-        print('The item you want to get is not in the room.\n')
-    return inventory
-
-
-def view_inv(inventory):
-    if not inventory:
-        print('Your inventory is empty.')
-        return
-
-    print('You have', len(inventory), 'item(s) in your inventory.')
-    for i in range(len(inventory)):
-        print(str(i + 1) + '.', inventory[i])
-    print()
-
-
-# TODO possible to look only neighbour rooms
-def look(room, room_desc):
-    return room_desc[room]
-
-
 # --------------------------------------------------GUI----------------------------------------------------------------
+def get_entry(win):
+    entry = Entry(Point(552.0, 107.0), 20)
+    entry.setSize(10)
+    entry.setTextColor('dark khaki')
+    entry.setStyle('bold')
+    entry.draw(win)
+
+    while True:
+        key = win.getKey()
+        if key == 'Return':
+            win.close()
+            return entry.getText()
+
+
+def get_pos_coordinates(curr_pos):
+    if curr_pos == [0, 1]:
+        return 342.0, 154.0
+    elif curr_pos == [1, 0]:
+        return 258.0, 220.0
+    elif curr_pos == [1, 1]:
+        return 347.0, 222.0
+    elif curr_pos == [1, 2]:
+        return 425.0, 223.0
+    elif curr_pos == [2, 1]:
+        return 345.0, 286.0
+    elif curr_pos == [2, 2]:
+        return 425.0, 286.0
+
 
 def welcome_gui_page():
     win = GraphWin('Adventure Game', 670, 440)
@@ -112,7 +109,20 @@ def welcome_gui_page():
     win.close()
 
 
-def rooms_gui_page():
+def instructions_page_gui():
+    win = GraphWin('Adventure Game', 670, 440)
+    win.setBackground('black')
+
+    text = Text(Point(335, 220), 'Instructions:\nClick on the screen to continue')
+    text.setTextColor('white')
+    text.setSize(20)
+    text.draw(win)
+
+    win.getMouse()
+    win.close()
+
+
+def rooms_gui_page(message, curr_pos):
     win = GraphWin('Adventure Game', 670, 440)
     Image(Point(335, 220), 'rooms_page_background.png').draw(win)
 
@@ -139,54 +149,22 @@ def rooms_gui_page():
     text5 = Text(Point(331.0, 301.0), 'ROOM 5')
     text7 = Text(Point(412.0, 302.0), 'ROOM 6')
     text8 = Text(Point(546.0, 66.0), 'What do you want to do next?')
-
     text = Text(Point(335.0, 406.0), 'You are currently in the main cabin of the spaceship.')
-    texts = [text, text1, text2, text3, text4, text5, text7, text8]
+    message_text = Text(Point(150, 100), message)
+
+    texts = [text, text1, text2, text3, text4, text5, text7, text8, message_text]
 
     for t in texts:
         t.setTextColor('dark khaki')
         t.setSize(15)
         t.draw(win)
 
-    entry = Entry(Point(552.0, 107.0), 20)
-    entry.setSize(10)
-    entry.setTextColor('dark khaki')
-    entry.setStyle('bold')
-    entry.draw(win)
+    x, y = get_pos_coordinates(curr_pos)
+    position_dot = Circle(Point(x, y), 10)
+    position_dot.setFill('red')
+    position_dot.draw(win)
 
-    while True:
-        key = win.getKey()
-        if key == 'Return':
-            win.close()
-            return entry.getText()
-
-
-def room_gui(room_objects, room_description):
-    win = GraphWin('Adventure Game', 670, 440)
-    win.setBackground('black')
-
-    text = Text(Point(335, 220), f'Room description: {room_description}\n'
-                                 f'Objects: {room_objects}')
-    text.setTextColor('dark khaki')
-    text.setSize(20)
-    text.draw(win)
-
-    win.getMouse()
-    win.close()
-
-
-def look_room_gui(room, room_description):
-    win = GraphWin('Adventure Game', 670, 440)
-    win.setBackground('black')
-
-    text = Text(Point(335, 220), f'You are looking at {room}\n'
-                                 f'Room description: {room_description}\n')
-    text.setTextColor('dark khaki')
-    text.setSize(20)
-    text.draw(win)
-
-    win.getMouse()
-    win.close()
+    return get_entry(win)
 
 
 # --------------------------------------------------Dictionaries-------------------------------------------------------
@@ -236,18 +214,18 @@ room_desc = {
 
 def main():
     welcome_gui_page()
+    instructions_page_gui()
 
     inventory = []
     curr_pos = [1, 1]
-    curr_room_objects = []
-    curr_room_description = ''
+    room_objects = []
     possible_directions = ['north', 'south', 'west', 'east']
+    message = ''
     action_count = 0
     log_file = open('actions_log.txt', 'w')
-    game_over = False
 
     while True:
-        command = rooms_gui_page()
+        command = rooms_gui_page(message, curr_pos)
         # command = input('What do you want to do now?\n'
         #                 'You can choose from:\n'
         #                 '>>> go [possible direction]\n'
@@ -260,13 +238,16 @@ def main():
             break
 
         if not is_command_valid(command):
-            print('Invalid command!\n')
+            message = 'Invalid command!'
             continue
 
         if 'go' == command.split()[0]:
             direction = command.split()[1].lower()
 
             if not is_direction_possible(direction, possible_directions):
+                message = f'It is not possible to go {direction}!\nPossible directions:\n'
+                for possible_dir in possible_directions:
+                    message += f'>> {possible_dir}\n'
                 continue
 
             if direction == 'north':
@@ -283,31 +264,35 @@ def main():
                 curr_pos[1] += dir_changes['east'][1]
 
             # find current room, call its function, and get its objects
-            curr_room_objects, possible_directions, curr_room_description = room_pos[(curr_pos[0], curr_pos[1])]()
-            room_gui(curr_room_objects, curr_room_description)
+            room_objects, possible_directions, room_description = room_pos[(curr_pos[0], curr_pos[1])]()
+            message = f'Room description: {room_description}\nObjects: {room_objects}'
 
         elif 'look' == command.split()[0]:
             try:
                 room = command.split()[1]
-                look_room_gui(room, curr_room_description)
-                # print(look(room, curr_room_description))
-                # print()
+                message = f'You are looking at {room}\nRoom description: {room_desc[room]}'
             except KeyError:
-                print('Invalid room!\n')
+                message = 'Invalid room!'
                 continue
 
         elif "get" in command:
             item = command.split(' ', 1)[1:][0]
-            inventory = get(item, inventory, curr_room_objects)
+            if item in room_objects:
+                inventory.append(item)
+                message = f'{item} added successfully to your inventory!'
+            else:
+                message = f'{item} is not in the room and cannot be added to your inventory!'
 
         elif command == 'view inventory':
-            view_inv(inventory)
+            if not inventory:
+                message = 'Your inventory is empty.'
+            else:
+                message = f'You have {len(inventory)} item(s) in your inventory.\n'
+                for i in range(len(inventory)):
+                    message += f'{i + 1}. {inventory[i]}\n'
 
         action_count += 1
         print('Action', action_count, ':', command, file=log_file)
-
-        if game_over:
-            break
 
     log_file.close()
 
