@@ -5,50 +5,62 @@ from graphics import *
 
 def enter_room1():
     description = 'You have entered in the cockpit.\n'
-    objects = ['Pair of glasses', 'Bottle of water']
+    objects = ['pair of glasses', 'bottle of water']
     possible_directions = ['south']
-    return objects, possible_directions, description
+    possible_looks = ['main cabin', 'cockpit']
+    return objects, possible_directions, description, possible_looks
 
 
 def enter_room2():
     description = 'You have entered in the systems room.\n'
-    objects = ['Maintenance manual', 'Wrench']
+    objects = ['maintenance manual', 'wrench']
     possible_directions = ['east']
-    return objects, possible_directions, description
+    possible_looks = ['main cabin', 'systems room']
+    return objects, possible_directions, description, possible_looks
 
 
 def enter_room3():
     description = 'You have entered in the main cabin.\n'
     objects = []
     possible_directions = ['north', 'south', 'west', 'east']
-    return objects, possible_directions, description
+    possible_looks = ['main cabin', 'cockpit', 'systems room', 'pilot room', 'cargo room']
+    return objects, possible_directions, description, possible_looks
 
 
 def enter_room4():
-    description = 'You have entered in the pilot\'s bedroom.\n'
-    objects = ['Key', 'Tube of sunscreen', 'Booking confirmation for Mallorca']
-    possible_directions = ['west']
-    return objects, possible_directions, description
+    description = 'You have entered in the pilot''s bedroom.\n'
+    objects = ['key', 'tube of sunscreen', 'booking confirmation']
+    possible_directions = ['west', 'south']
+    possible_looks = ['main cabin', 'pilot room', 'engine room']
+    return objects, possible_directions, description, possible_looks
 
 
 def enter_room5():
-    description = 'You have entered in the cargo bay.\n'
-    objects = ['Can of oil']
+    description = 'You have entered in the cargo room.\n'
+    objects = ['can of oil']
     possible_directions = ['north', 'east']
-    return objects, possible_directions, description
+    possible_looks = ['main cabin', 'cargo room', 'engine room']
+    return objects, possible_directions, description, possible_looks
 
 
 def enter_room6():
-    description = 'You have entered in the engine room.\n'
+    description = 'You have entered in the engine room\n'
     objects = []
-    possible_directions = ['north', 'west']  # TODO add this functionality to LOOK
-    return objects, possible_directions, description
+    possible_directions = ['north', 'west']
+    possible_looks = ['engine room', 'pilot room', 'cargo room']
+    return objects, possible_directions, description, possible_looks
 
 
 # --------------------------------------------------Validations--------------------------------------------------------
 
 def is_direction_possible(direction, possible_directions):
     if direction not in possible_directions:
+        return False
+    return True
+
+
+def is_look_possible(room, possible_looks):
+    if room not in possible_looks:
         return False
     return True
 
@@ -66,7 +78,8 @@ def is_command_valid(command):
 def get_entry(win):
     entry = Entry(Point(552.0, 107.0), 20)
     entry.setSize(10)
-    entry.setTextColor('dark khaki')
+    entry.setFill("white")
+    entry.setTextColor('black')
     entry.setStyle('bold')
     entry.draw(win)
 
@@ -126,7 +139,7 @@ def rooms_gui_page(message, curr_pos):
     win = GraphWin('Adventure Game', 670, 440)
     Image(Point(335, 220), 'rooms_page_background.png').draw(win)
 
-    triangle = Polygon(Point(335.0, 21.0), Point(88.0, 374.0), Point(582.0, 374.0),)
+    triangle = Polygon(Point(335.0, 21.0), Point(88.0, 374.0), Point(582.0, 374.0), )
     rectangle1 = Rectangle(Point(293.0, 205.0), Point(376.0, 270.0))
     rectangle2 = Rectangle(Point(293.0, 139.0), Point(376.0, 205.0))
     rectangle3 = Rectangle(Point(293.0, 332.0), Point(376.0, 270.0))
@@ -142,26 +155,26 @@ def rooms_gui_page(message, curr_pos):
         shape.setWidth(4)
         shape.draw(win)
 
-    text1 = Text(Point(332.0, 172.0), 'ROOM 1')
-    text2 = Text(Point(333.0, 238.0), 'ROOM 3')
-    text3 = Text(Point(250.0, 238.0), 'ROOM 2')
-    text4 = Text(Point(411.0, 239.0), 'ROOM 4')
-    text5 = Text(Point(331.0, 301.0), 'ROOM 5')
-    text7 = Text(Point(412.0, 302.0), 'ROOM 6')
-    text8 = Text(Point(546.0, 66.0), 'What do you want to do next?')
-    text = Text(Point(335.0, 406.0), 'You are currently in the main cabin of the spaceship.')
+    text1 = Text(Point(332.0, 152.0), 'Cockpit')
+    text2 = Text(Point(333.0, 218.0), 'Main Cabin')
+    text3 = Text(Point(250.0, 218.0), 'Systems Room')
+    text4 = Text(Point(411.0, 219.0), 'Pilot Room')
+    text5 = Text(Point(331.0, 281.0), 'Cargo Room')
+    text7 = Text(Point(412.0, 282.0), 'Engine Room')
+    text8 = Text(Point(546.0, 46.0), 'What do you want to do next?')
     message_text = Text(Point(150, 100), message)
 
-    texts = [text, text1, text2, text3, text4, text5, text7, text8, message_text]
+    texts = [text1, text2, text3, text4, text5, text7, text8, message_text]
 
     for t in texts:
         t.setTextColor('dark khaki')
-        t.setSize(15)
+        t.setSize(8)
         t.draw(win)
 
+    text8.setSize(13)
     x, y = get_pos_coordinates(curr_pos)
-    position_dot = Circle(Point(x, y), 10)
-    position_dot.setFill('red')
+    position_dot = Circle(Point(x - 15, y + 25), 10)
+    position_dot.setFill('green')
     position_dot.draw(win)
 
     return get_entry(win)
@@ -187,26 +200,30 @@ dir_changes = {
     'east': (0, 1),
 }
 
-# TODO Objects Descriptions
 obj_desc = {
-    'Pair of glasses': 'OD1',
-    'Bottle of water': 'OD2',
-    'Maintenance manual': 'OD3',
-    'Wrench': 'OD4',
-    'Key': 'OD5',
-    'Tube of sunscreen': 'OD6',
-    'Booking confirmation for Mallorca': 'OD7',
-    'Can of oil': 'OD8',
+    'pair of glasses': 'These could be helpful if you had something to read.',
+    'bottle of water': 'Stay hydrated!',
+    'maintenance manual': 'It seems like this manual could be helpful to do some kind of reparation on your spaceship.\n'
+                          'But with your old eyes, you cannot even read the title...\n',
+    'wrench': 'Looks like the perfect tool to do any kind of reparation.',
+    'key': 'Well, it''s a key. So it probably opens a door...',
+    'tube of sunscreen': 'Essential to tan without burning your alien skin!',
+    'booking confirmation': 'Make sure not lose it or you will have to forget your holidays on Earth!',
+    'can of oil': 'It''s greasy and it smells bad. The kind of stuff you pour in an engine but not in your glass. ',
 }
 
-# TODO Room Description + objects
 room_desc = {
-    'room1': 'RD1',
-    'room2': 'RD2',
-    'room3': 'RD3',
-    'room4': 'RD4',
-    'room5': 'RD5',
-    'room6': 'RD6',
+    'cockpit': 'This is where you can control your spaceship.\n'
+               'There is a pair of glasses on the pilot''s seat\n'
+               'and a bottle of water in the cup holder.',
+    'systems room': 'There are screens and wires everywhere. \n'
+                    'It\'s a real mess!\nYou however spotted what appears\nto be a maintenance manual on a table\n'
+                    'and a wrench on the floor.',
+    'main cabin': 'This is where everyone seats when traveling.',
+    'pilot room': 'There is a bed that does not look very comfortable on which lies a tube of sunscreen together '
+                  'with your booking confirmation for mallorca. There is also a key on the pilot''s desk.',
+    'cargo room': 'There is a big can of oil in the corner',
+    'engine room': 'Here is where the whole engine''s machinery is located!',
 }
 
 
@@ -220,12 +237,16 @@ def main():
     curr_pos = [1, 1]
     room_objects = []
     possible_directions = ['north', 'south', 'west', 'east']
+    possible_looks = ['main cabin', 'cockpit', 'systems room', 'pilot room', 'cargo room']
     message = ''
     action_count = 0
+    allow_room6 = False  # access to room 6 is not allowed
     log_file = open('actions_log.txt', 'w')
 
     while True:
+        tried_room6 = False
         command = rooms_gui_page(message, curr_pos)
+        command = command.lower()
         # command = input('What do you want to do now?\n'
         #                 'You can choose from:\n'
         #                 '>>> go [possible direction]\n'
@@ -242,7 +263,7 @@ def main():
             continue
 
         if 'go' == command.split()[0]:
-            direction = command.split()[1].lower()
+            direction = command.split()[1]
 
             if not is_direction_possible(direction, possible_directions):
                 message = f'It is not possible to go {direction}!\nPossible directions:\n'
@@ -253,33 +274,77 @@ def main():
             if direction == 'north':
                 curr_pos[0] += dir_changes['north'][0]
                 curr_pos[1] += dir_changes['north'][1]
-            elif direction == 'south':
+            elif direction == 'south' and curr_pos != [1, 2]:
                 curr_pos[0] += dir_changes['south'][0]
                 curr_pos[1] += dir_changes['south'][1]
+                print(curr_pos[0], curr_pos[1])
             elif direction == 'west':
                 curr_pos[0] += dir_changes['west'][0]
                 curr_pos[1] += dir_changes['west'][1]
-            elif direction == 'east':
+            elif direction == 'east' and curr_pos != [2, 1]:
                 curr_pos[0] += dir_changes['east'][0]
                 curr_pos[1] += dir_changes['east'][1]
+            elif direction == 'south' and curr_pos == [1, 2] and not allow_room6:
+                # if user wants to enter in engine room and cannot
+                curr_pos[0] = 1
+                curr_pos[1] = 2
+                tried_room6 = True
+            elif direction == 'east' and curr_pos == [2, 1] and not allow_room6:
+                # if user wants to enter in engine room and cannot
+                curr_pos[0] = 2
+                curr_pos[1] = 1
+                tried_room6 = True
+            elif direction == 'south' and curr_pos == [1, 2] and allow_room6:
+                # if user wants to enter in engine room and can
+                curr_pos[0] += dir_changes['south'][0]
+                curr_pos[1] += dir_changes['south'][1]
+                tried_room6 = True
+            elif direction == 'east' and curr_pos == [2, 1] and allow_room6:
+                # if user wants to enter in engine room and can
+                curr_pos[0] += dir_changes['east'][0]
+                curr_pos[1] += dir_changes['east'][1]
+                tried_room6 = True
 
             # find current room, call its function, and get its objects
-            room_objects, possible_directions, room_description = room_pos[(curr_pos[0], curr_pos[1])]()
-            message = f'Room description: {room_description}\nObjects: {room_objects}'
+            room_objects, possible_directions, curr_room_description, possible_looks = room_pos[
+                (curr_pos[0], curr_pos[1])
+            ]()
+            if not allow_room6 and tried_room6:
+                message = f'You cannot enter the door is locked :('
+            else:
+                message = f'{curr_room_description}\n'
 
         elif 'look' == command.split()[0]:
             try:
-                room = command.split()[1]
-                message = f'You are looking at {room}\nRoom description: {room_desc[room]}'
+                room = command.split(' ', 1)[1:][0]
+
+                if not is_look_possible(room, possible_looks):
+                    message = f'It is not possible to look at {room}!\nPossible rooms to look at:\n'
+                    for possible_look in possible_looks:
+                        message += f'>> {possible_look}\n'
+                    continue
+                else:
+                    message = f'You are looking at {room}\n {room_desc[room]}'
             except KeyError:
-                message = 'Invalid room!'
+                message = 'Invalid room name!'
                 continue
 
         elif "get" in command:
             item = command.split(' ', 1)[1:][0]
             if item in room_objects:
                 inventory.append(item)
-                message = f'{item} added successfully to your inventory!'
+                if item == 'key':
+                    allow_room6 = True
+                if 'maintenance manual' in inventory and 'pair of glasses' in inventory:
+                    message = f'You just picked the {item}.\n' \
+                              f'This item was successfully added to your inventory!\n' \
+                              f'{obj_desc[item]}\nSince you also picked the pair of glasses,\n' \
+                              f'you put them on and managed to read that a wrench a some oil\n' \
+                              f'were needed to repair the engine. '
+                else:
+                    message = f'You just picked the {item}.\n' \
+                              f'This item was successfully added to your inventory!' \
+                              f'\n{obj_desc[item]}'
             else:
                 message = f'{item} is not in the room and cannot be added to your inventory!'
 
@@ -290,6 +355,10 @@ def main():
                 message = f'You have {len(inventory)} item(s) in your inventory.\n'
                 for i in range(len(inventory)):
                     message += f'{i + 1}. {inventory[i]}\n'
+
+        if curr_pos == [2, 2] and 'can of oil' in inventory and 'wrench' in inventory:
+            message = f'YOU WIN\nYour score is:'
+            command = "YOU WIN"
 
         action_count += 1
         print('Action', action_count, ':', command, file=log_file)
