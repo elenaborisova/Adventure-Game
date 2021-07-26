@@ -74,6 +74,41 @@ def is_command_valid(command):
         return True
 
 
+# --------------------------------------------------Go Function--------------------------------------------------------
+def go(curr_pos, direction, allow_room6, tried_room6):
+    if direction == 'north':
+        curr_pos[0] += dir_changes['north'][0]
+        curr_pos[1] += dir_changes['north'][1]
+    elif direction == 'south' and curr_pos != [1, 2]:
+        curr_pos[0] += dir_changes['south'][0]
+        curr_pos[1] += dir_changes['south'][1]
+    elif direction == 'west':
+        curr_pos[0] += dir_changes['west'][0]
+        curr_pos[1] += dir_changes['west'][1]
+    elif direction == 'east' and curr_pos != [2, 1]:
+        curr_pos[0] += dir_changes['east'][0]
+        curr_pos[1] += dir_changes['east'][1]
+    elif direction == 'south' and curr_pos == [1, 2] and not allow_room6:
+        # if user wants to enter in engine room and cannot
+        curr_pos[0] = 1
+        curr_pos[1] = 2
+        tried_room6 = True
+    elif direction == 'east' and curr_pos == [2, 1] and not allow_room6:
+        curr_pos[0] = 2
+        curr_pos[1] = 1
+        tried_room6 = True
+    elif direction == 'south' and curr_pos == [1, 2] and allow_room6:
+        curr_pos[0] += dir_changes['south'][0]
+        curr_pos[1] += dir_changes['south'][1]
+        tried_room6 = True
+    elif direction == 'east' and curr_pos == [2, 1] and allow_room6:
+        curr_pos[0] += dir_changes['east'][0]
+        curr_pos[1] += dir_changes['east'][1]
+        tried_room6 = True
+
+    return curr_pos, tried_room6
+
+
 # --------------------------------------------------GUI----------------------------------------------------------------
 def get_entry(win):
     entry = Entry(Point(552.0, 107.0), 20)
@@ -271,39 +306,7 @@ def main():
                     message += f'>> {possible_dir}\n'
                 continue
 
-            if direction == 'north':
-                curr_pos[0] += dir_changes['north'][0]
-                curr_pos[1] += dir_changes['north'][1]
-            elif direction == 'south' and curr_pos != [1, 2]:
-                curr_pos[0] += dir_changes['south'][0]
-                curr_pos[1] += dir_changes['south'][1]
-                print(curr_pos[0], curr_pos[1])
-            elif direction == 'west':
-                curr_pos[0] += dir_changes['west'][0]
-                curr_pos[1] += dir_changes['west'][1]
-            elif direction == 'east' and curr_pos != [2, 1]:
-                curr_pos[0] += dir_changes['east'][0]
-                curr_pos[1] += dir_changes['east'][1]
-            elif direction == 'south' and curr_pos == [1, 2] and not allow_room6:
-                # if user wants to enter in engine room and cannot
-                curr_pos[0] = 1
-                curr_pos[1] = 2
-                tried_room6 = True
-            elif direction == 'east' and curr_pos == [2, 1] and not allow_room6:
-                # if user wants to enter in engine room and cannot
-                curr_pos[0] = 2
-                curr_pos[1] = 1
-                tried_room6 = True
-            elif direction == 'south' and curr_pos == [1, 2] and allow_room6:
-                # if user wants to enter in engine room and can
-                curr_pos[0] += dir_changes['south'][0]
-                curr_pos[1] += dir_changes['south'][1]
-                tried_room6 = True
-            elif direction == 'east' and curr_pos == [2, 1] and allow_room6:
-                # if user wants to enter in engine room and can
-                curr_pos[0] += dir_changes['east'][0]
-                curr_pos[1] += dir_changes['east'][1]
-                tried_room6 = True
+            curr_pos, allow_room6 = go(curr_pos, direction, allow_room6, tried_room6)
 
             # find current room, call its function, and get its objects
             room_objects, possible_directions, curr_room_description, possible_looks = room_pos[
