@@ -111,11 +111,10 @@ def go(curr_pos, direction, allow_room6, tried_room6):
 
 # --------------------------------------------------GUI----------------------------------------------------------------
 def get_entry(win):
-    entry = Entry(Point(552.0, 107.0), 20)
+    entry = Entry(Point(550.0, 90.0), 30)
     entry.setSize(10)
     entry.setFill("white")
     entry.setTextColor('black')
-    entry.setStyle('bold')
     entry.draw(win)
 
     while True:
@@ -127,31 +126,42 @@ def get_entry(win):
 
 def get_pos_coordinates(curr_pos):
     if curr_pos == [0, 1]:
-        return 342.0, 154.0
+        return 347.0, 154.0
     elif curr_pos == [1, 0]:
-        return 258.0, 220.0
+        return 265.0, 222.0
     elif curr_pos == [1, 1]:
         return 347.0, 222.0
     elif curr_pos == [1, 2]:
-        return 425.0, 223.0
+        return 429.0, 222.0
     elif curr_pos == [2, 1]:
-        return 345.0, 286.0
+        return 347.0, 286.0
     elif curr_pos == [2, 2]:
-        return 425.0, 286.0
+        return 429.0, 286.0
 
 
 def welcome_gui_page():
     win = GraphWin('Adventure Game', 670, 440)
 
     Image(Point(335, 220), 'space.png').draw(win)
-    welcome_message = Text(Point(450, 100), 'START GAME HERE')
-    welcome_message.setTextColor('white')
+    welcome_message1 = Text(Point(335, 80), 'An alien is planning on visiting planet Earth for a couple days.\n '
+                                            'After booking his Airbnb, he jumps in his spaceship and leaves his planet.\n '
+                                            'After a 3 days journey in space, he suddenly hears a terrible noise!\n '
+                                            'His engine just stopped working...\n '
+                                            'He needs to repair it to be on time for his rental in Mallorca. HELP HIM!\n\n '
+                                            'You are the alien! Look in your spaceship for any items that could help you'
+                                            ' continue your journey.\n')
+
+    welcome_message = Text(Point(550, 370), 'Start HERE')
+    welcome_message1.setTextColor('white')
+    welcome_message.setTextColor('goldenrod')
+    welcome_message1.draw(win)
     welcome_message.draw(win)
+    welcome_message.setStyle('bold')
     welcome_message.setSize(25)
 
     while True:
         p = win.getMouse()
-        if 330 <= p.getX() <= 570 and 90 <= p.getY() <= 110:
+        if 550 <= p.getX() <= 670 and 350 <= p.getY() <= 380:
             break
 
     win.close()
@@ -161,10 +171,25 @@ def instructions_page_gui():
     win = GraphWin('Adventure Game', 670, 440)
     win.setBackground('black')
 
-    text = Text(Point(335, 220), 'Instructions:\nClick on the screen to continue')
-    text.setTextColor('white')
-    text.setSize(20)
+    text1 = Text(Point(335, 30), 'INSTRUCTIONS:')
+    text = Text(Point(335, 200), 'Help the alien gather the items needed to repair his engine!\n\n\n\n'
+                                 'What you can do:\n\n\n'
+                                 '1. "Go <North, South, East or West>" to move between rooms.\n\n'
+                                 '2. "Look <Room Name>" to look at the room your are in or a nearby room.\n\n '
+                                 '3. "Get <Item>" to pick up an item that is in your room.\n\n'
+                                 '4. "View Inventory" to see which items you have in your inventory.\n\n'
+                                 'The green dot represents your current position on the spaceship.')
+
+    text2 = Text(Point(335, 400), 'Click on the screen to continue')
+    text1.setTextColor('red')
+    text.setTextColor('goldenrod')
+    text2.setTextColor('white')
+    text1.setSize(20)
+    text.setSize(13)
+    text2.setSize(15)
+    text1.draw(win)
     text.draw(win)
+    text2.draw(win)
 
     win.getMouse()
     win.close()
@@ -185,31 +210,36 @@ def rooms_gui_page(message, curr_pos):
     shapes = [triangle, rectangle1, rectangle2, rectangle3, rectangle4, rectangle5, rectangle6]
 
     for shape in shapes:
-        shape.setFill('black')
-        shape.setOutline('dark khaki')
-        shape.setWidth(4)
+        shape.setFill('SlateGray3')
+        triangle.setFill('Slategray')
+        shape.setOutline('goldenrod')
+        shape.setWidth(1)
+        triangle.setWidth(3)
         shape.draw(win)
 
-    text1 = Text(Point(332.0, 152.0), 'Cockpit')
+    text1 = Text(Point(333.0, 152.0), 'Cockpit')
     text2 = Text(Point(333.0, 218.0), 'Main Cabin')
-    text3 = Text(Point(250.0, 218.0), 'Systems Room')
-    text4 = Text(Point(411.0, 219.0), 'Pilot Room')
-    text5 = Text(Point(331.0, 281.0), 'Cargo Room')
-    text7 = Text(Point(412.0, 282.0), 'Engine Room')
+    text3 = Text(Point(253.0, 218.0), 'Systems Room')
+    text4 = Text(Point(413.0, 219.0), 'Pilot Room')
+    text5 = Text(Point(333.0, 281.0), 'Cargo Room')
+    text7 = Text(Point(413.0, 282.0), 'Engine Room')
     text8 = Text(Point(546.0, 46.0), 'What do you want to do next?')
-    message_text = Text(Point(150, 100), message)
+    text9 = Text(Point(485, 66), 'Press ENTER to quit.')
+    message_text = Text(Point(146, 76), message)
 
-    texts = [text1, text2, text3, text4, text5, text7, text8, message_text]
+    texts = [text1, text2, text3, text4, text5, text7, text8, text9, message_text]
 
     for t in texts:
-        t.setTextColor('dark khaki')
+        t.setTextColor('white')
         t.setSize(8)
         t.draw(win)
 
     text8.setSize(13)
+    text9.setSize(8)
+    message_text.setSize(10)
     x, y = get_pos_coordinates(curr_pos)
     position_dot = Circle(Point(x - 15, y + 25), 10)
-    position_dot.setFill('green')
+    position_dot.setFill('forest green')
     position_dot.draw(win)
 
     return get_entry(win)
@@ -236,29 +266,29 @@ dir_changes = {
 }
 
 obj_desc = {
-    'pair of glasses': 'These could be helpful if you had something to read.',
+    'pair of glasses': 'These could be helpful if you had\n to read a book.',
     'bottle of water': 'Stay hydrated!',
-    'maintenance manual': 'It seems like this manual could be helpful to do some kind of reparation on your spaceship.\n'
-                          'But with your old eyes, you cannot even read the title...\n',
-    'wrench': 'Looks like the perfect tool to do any kind of reparation.',
+    'maintenance manual': 'This manual could help you do some reparations.\n'
+                          'But without glasses, you can''t even read the title.\n',
+    'wrench': 'Perfect tool to do any kind of reparation!',
     'key': 'Well, it''s a key. So it probably opens a door...',
     'tube of sunscreen': 'Essential to tan without burning your alien skin!',
-    'booking confirmation': 'Make sure not lose it or you will have to forget your holidays on Earth!',
-    'can of oil': 'It''s greasy and it smells bad. The kind of stuff you pour in an engine but not in your glass. ',
+    'booking confirmation': 'Make sure not lose it\n or you will have to forget\n your holidays on Earth!',
+    'can of oil': 'It''s greasy and it smells bad.\n The kind of stuff you pour in an engine\n but not in your glass. ',
 }
 
 room_desc = {
     'cockpit': 'This is where you can control your spaceship.\n'
-               'There is a pair of glasses on the pilot''s seat\n'
-               'and a bottle of water in the cup holder.',
+               'There is a "pair of glasses" on the pilot''s seat\n'
+               'and a "bottle of water" in the cup holder.',
     'systems room': 'There are screens and wires everywhere. \n'
-                    'It\'s a real mess!\nYou however spotted what appears\nto be a maintenance manual on a table\n'
-                    'and a wrench on the floor.',
+                    'It\'s a real mess!\nYou however spotted what appears\nto be a "maintenance manual" on a table\n'
+                    'and a "wrench" on the floor.',
     'main cabin': 'This is where everyone seats when traveling.',
-    'pilot room': 'There is a bed that does not look very comfortable on which lies a tube of sunscreen together '
-                  'with your booking confirmation for mallorca. There is also a key on the pilot''s desk.',
-    'cargo room': 'There is a big can of oil in the corner',
-    'engine room': 'Here is where the whole engine''s machinery is located!',
+    'pilot room': 'There is a bed that does not look\n very comfortable on which lies\n a "tube of sunscreen" together '
+                  'with\n your "booking confirmation" for mallorca.\n There is also a "key" on the pilot''s desk.',
+    'cargo room': 'It''s full of luggage!\nThere is a big "can of oil" in the corner.',
+    'engine room': 'Here is where the whole\n engine''s machinery is located!',
 }
 
 
@@ -276,19 +306,13 @@ def main():
     message = ''
     action_count = 0
     allow_room6 = False  # access to room 6 is not allowed
+    hint = True  # hint for the book and pair of glasses combination
     log_file = open('actions_log.txt', 'w')
 
     while True:
         tried_room6 = False
         command = rooms_gui_page(message, curr_pos)
         command = command.lower()
-        # command = input('What do you want to do now?\n'
-        #                 'You can choose from:\n'
-        #                 '>>> go [possible direction]\n'
-        #                 '>>> look [nearby room]\n'
-        #                 '>>> get [item]\n'
-        #                 '>>> view inventory\n'
-        #                 '[Press <ENTER> to quit]\n')
 
         if not command:
             break
@@ -306,8 +330,7 @@ def main():
                     message += f'>> {possible_dir}\n'
                 continue
 
-            curr_pos, allow_room6 = go(curr_pos, direction, allow_room6, tried_room6)
-
+            curr_pos, tried_room6 = go(curr_pos, direction, allow_room6, tried_room6)
             # find current room, call its function, and get its objects
             room_objects, possible_directions, curr_room_description, possible_looks = room_pos[
                 (curr_pos[0], curr_pos[1])
@@ -327,40 +350,47 @@ def main():
                         message += f'>> {possible_look}\n'
                     continue
                 else:
-                    message = f'You are looking at {room}\n {room_desc[room]}'
+                    message = f'You are looking at {room}.\n {room_desc[room]}'
             except KeyError:
                 message = 'Invalid room name!'
                 continue
 
         elif "get" in command:
             item = command.split(' ', 1)[1:][0]
-            if item in room_objects:
+            if item in room_objects and item not in inventory:
                 inventory.append(item)
                 if item == 'key':
                     allow_room6 = True
-                if 'maintenance manual' in inventory and 'pair of glasses' in inventory:
+                if 'maintenance manual' in inventory and 'pair of glasses' in inventory and hint:
                     message = f'You just picked the {item}.\n' \
-                              f'This item was successfully added to your inventory!\n' \
-                              f'{obj_desc[item]}\nSince you also picked the pair of glasses,\n' \
-                              f'you put them on and managed to read that a wrench a some oil\n' \
-                              f'were needed to repair the engine. '
+                              f'{obj_desc[item]}Since you have both the manual and the glasses\n' \
+                              f'in your inventory, you can now read\n that a wrench' \
+                              f'and some oil are needed\n to repair the engine. '
+                    hint = False
                 else:
                     message = f'You just picked the {item}.\n' \
-                              f'This item was successfully added to your inventory!' \
+                              f'This item was added to your inventory!' \
                               f'\n{obj_desc[item]}'
+            elif item in room_objects and item in inventory:
+                message = f'{item} is already in your inventory!'
             else:
-                message = f'{item} is not in the room and cannot be added to your inventory!'
+                message = f'{item} is not in the room \nand cannot be added to your inventory!'
 
         elif command == 'view inventory':
             if not inventory:
                 message = 'Your inventory is empty.'
             else:
-                message = f'You have {len(inventory)} item(s) in your inventory.\n'
+                message = f'You have {len(inventory)} item(s) in your inventory:\n'
                 for i in range(len(inventory)):
                     message += f'{i + 1}. {inventory[i]}\n'
 
         if curr_pos == [2, 2] and 'can of oil' in inventory and 'wrench' in inventory:
-            message = f'YOU WIN\nYour score is:'
+            score = (9 / (action_count + 1)) * 60 + (
+                        3 / len(inventory)) * 40  # Min[actions possible, objects] to win = [9,3]
+            score = round(float(score), 1)
+            message = f'CONGRATULATION! YOU WIN!\nYour score is: {score}%\n\n ' \
+                      f'Try improving your score by solving\n the game as fast as possible and\n ' \
+                      f'with the least possible items!'
             command = "YOU WIN"
 
         action_count += 1
